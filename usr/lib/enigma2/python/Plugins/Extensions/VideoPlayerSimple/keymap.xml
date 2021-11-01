@@ -1,0 +1,56 @@
+<keymap>
+	<map context="VideoPlayerActions">
+		<key id="KEY_LEFT" mapto="vp_left" flags="mr" />
+		<key id="KEY_RIGHT" mapto="vp_right" flags="mr" />
+		<key id="KEY_UP" mapto="vp_up" flags="mr" />
+		<key id="KEY_DOWN" mapto="vp_down" flags="mr" />
+		<key id="KEY_PREVIOUS" mapto="vp_prevService" flags="mr" />
+		<key id="KEY_NEXT" mapto="vp_nextService" flags="mr" />
+		<key id="KEY_REWIND" mapto="vp_seekBack" flags="b" />
+		<key id="KEY_FASTFORWARD" mapto="vp_seekFwd" flags="b" />
+		<key id="KEY_REWIND" mapto="vp_seekBackManual" flags="l" />
+		<key id="KEY_FASTFORWARD" mapto="vp_seekFwdManual" flags="l" />
+		<key id="KEY_CHANNELDOWN" mapto="vp_prevBouquet" flags="mr" />
+		<key id="KEY_CHANNELUP" mapto="vp_nextBouquet" flags="mr" />
+		<key id="KEY_PREVIOUSSONG" mapto="vp_movePrev" flags="m" />
+		<key id="KEY_NEXTSONG" mapto="vp_moveNext" flags="m" />
+		<key id="KEY_EXIT" mapto="vp_cancel" flags="b" />
+		<key id="KEY_EXIT" mapto="vp_cancellong" flags="l" />
+		<key id="KEY_ESC" mapto="vp_cancel" flags="m" />
+		<key id="KEY_OK" mapto="vp_ok" flags="b" />
+		<key id="KEY_OK" mapto="vp_menu" flags="l" />
+		<key id="KEY_MENU" mapto="vp_menu" flags="b" />
+		<key id="KEY_MENU" mapto="vp_togglethumb" flags="l" />
+		<key id="KEY_RED" mapto="vp_red" flags="m" />
+		<key id="KEY_GREEN" mapto="vp_green" flags="m" />
+		<key id="KEY_BLUE" mapto="vp_blue" flags="m" />
+		<key id="KEY_PLAYPAUSE" mapto="vp_playpauseService" flags="m" />
+		<key id="KEY_STOP" mapto="vp_leavePlayer" flags="m" />
+		<key id="KEY_TEXT" mapto="vp_name" flags="b" />
+		<key id="KEY_TEXT" mapto="vp_namereverse" flags="l" />
+		<key id="KEY_VIDEO" mapto="vp_showMovies" flags="m" />
+		<key id="KEY_PVR" mapto="vp_showMovies" flags="m" />
+		<key id="KEY_FILE" mapto="vp_showMovies" flags="m" />
+		<key id="KEY_FAVORITES" mapto="vp_showMovies" flags="m" />
+		<key id="KEY_HELP" mapto="vp_displayHelp" flags="m" />
+		<key id="KEY_INFO" mapto="vp_info" flags="m" />
+		<key id="KEY_TV" mapto="vp_playtv" flags="b" />
+		<key id="KEY_TV" mapto="vp_stoptv" flags="l" />
+		<key id="KEY_RADIO" mapto="vp_shuffle" flags="b" />
+		<key id="KEY_RADIO" mapto="vp_default" flags="l" />
+		<key id="KEY_PROGRAM" mapto="vp_date" flags="b" />
+		<key id="KEY_PROGRAM" mapto="vp_datereverse" flags="l" />
+		<key id="KEY_RECORD" mapto="vp_size" flags="b" />
+		<key id="KEY_RECORD" mapto="vp_sizereverse" flags="l" />
+		<key id="KEY_1" mapto="vp_1" flags="m" />
+		<key id="KEY_3" mapto="vp_3" flags="m" />
+		<key id="KEY_4" mapto="vp_4" flags="m" />
+		<key id="KEY_6" mapto="vp_6" flags="m" />
+		<key id="KEY_7" mapto="vp_7" flags="m" />
+		<key id="KEY_9" mapto="vp_9" flags="m" />
+		<key id="KEY_2" mapto="vp_2" flags="mr" />
+		<key id="KEY_5" mapto="vp_5" flags="mr" />
+		<key id="KEY_8" mapto="vp_8" flags="m" />
+		<key id="KEY_0" mapto="vp_0" flags="m" />
+	</map>
+</keymap>
