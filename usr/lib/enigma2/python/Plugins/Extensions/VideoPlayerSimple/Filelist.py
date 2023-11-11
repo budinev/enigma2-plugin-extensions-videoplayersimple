@@ -31,6 +31,7 @@ EXTENSIONS = {
 		"amr": "music",
 		"au": "music",
 		"mid": "music",
+		"radio": "music",
 		"mpg": "movie",
 		"vob": "movie",
 		"m4v": "movie",
@@ -58,6 +59,11 @@ EXTENSIONS = {
 		"wtv": "movie",
 		"webm": "movie",
 		"stream": "movie",
+		"m3u": "movie",
+		"m3u8": "movie",
+		"tv": "movie",
+		"e2pls": "movie",
+		"pls": "movie",
 		"iso": "movie",
 		"img": "movie",
 		"nrg": "movie",
@@ -88,7 +94,7 @@ def FileEntryComponent(name, absolute = None, isDir = False, directory = "/", si
 	else:
 		extension = name.split('.')
 		extension = extension[-1].lower()
-		if EXTENSIONS.has_key(extension):
+		if extension in EXTENSIONS:
 			png = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "extensions/" + EXTENSIONS[extension] + ".png"))
 		else:
 			png = None
@@ -221,9 +227,9 @@ class FileList(MenuList):
 						files.remove(x)
 		if directory is not None and self.showDirectories and not self.isTop:
 			if directory == self.current_mountpoint and self.showMountpoints:
-				self.list.append(FileEntryComponent(name = "<" +_("List of storage Devices") + ">", absolute = None, isDir = True, directory = directory))
+				self.list.append(FileEntryComponent(name = "<" + "List of storage Devices" + ">", absolute = None, isDir = True, directory = directory))
 			elif (directory != "/") and not (self.inhibitMounts and self.getMountpoint(directory) in self.inhibitMounts):
-				self.list.append(FileEntryComponent(name = "<" +_("Parent directory") + ">", absolute = '/'.join(directory.split('/')[:-2]) + '/', isDir = True, directory = directory))
+				self.list.append(FileEntryComponent(name = "<" + "Parent directory" + ">", absolute = '/'.join(directory.split('/')[:-2]) + '/', isDir = True, directory = directory))
 		date_file_list = []
 		if self.showDirectories:
 			for x in directories:
@@ -312,7 +318,7 @@ class FileList(MenuList):
 				if (self.matchingPattern is None) or re_compile(self.matchingPattern).search(path):
 					self.list.append(FileEntryComponent(name = name, absolute = file , isDir = isDir, directory = directory, size = size, timestamp = timestamp))
 		if self.showMountpoints and len(self.list) == 0:
-			self.list.append(FileEntryComponent(name = _("nothing connected"), absolute = None, isDir = False))
+			self.list.append(FileEntryComponent(name = "nothing connected", absolute = None, isDir = False))
 		self.l.setList(self.list)
 		if select is not None:
 			i = 0
