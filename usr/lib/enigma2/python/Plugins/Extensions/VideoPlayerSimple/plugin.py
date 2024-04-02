@@ -279,7 +279,7 @@ class VideoPlayerSimple(Screen, InfoBarAudioSelection, InfoBarSubtitleSupport, I
 		sort = config.plugins.videoplayersimple.sortmode.enabled.value
 		self.filelist = []
 		self["filelist"] = []
-		self.filelist = FileList(currDir, useServiceRef = True, showDirectories = True, showFiles = True, matchingPattern = "(?i)^.*\.(dts|mp3|wav|wave|wv|oga|ogg|flac|m4a|mp2|m2a|wma|ac3|mka|aac|ape|alac|amr|au|mid|mpg|mpeg|mpe|vob|m4v|mkv|avi|divx|dat|flv|mp4|mov|wmv|asf|3gp|3g2|rm|rmvb|ogm|ogv|m2ts|mts|ts|pva|wtv|webm|stream|iso|img|nrg|jpg|jpeg|jpe|png|bmp|gif|svg|mvi|m3u|m3u8|tv|radio|e2pls|pls)", additionalExtensions = "4198:jpg 4198:jpeg 4198:jpe 4198:png 4198:bmp 4198:gif 4198:svg 4198:mvi 4198:m3u 4198:m3u8 4198:tv 4198:radio 4198:e2pls 4198:pls", sort = sort)
+		self.filelist = FileList(currDir, useServiceRef = True, showDirectories = True, showFiles = True, matchingPattern = "(?i)^.*\.(dts|mp3|wav|wave|wv|oga|ogg|flac|m4a|mp2|m2a|wma|ac3|mka|aac|ape|alac|amr|au|mid|mpg|mpeg|mpe|vob|m4v|mkv|avi|divx|dat|flv|mp4|mov|wmv|asf|3gp|3g2|rm|rmvb|ogm|ogv|m2ts|mts|ts|pva|wtv|webm|stream|iso|img|nrg|jpg|jpeg|jpe|png|bmp|gif|svg|mvi|m3u|m3u8|tv|radio|e2pls|pls|webp)", additionalExtensions = "4198:jpg 4198:jpeg 4198:jpe 4198:png 4198:bmp 4198:gif 4198:svg 4198:mvi 4198:m3u 4198:m3u8 4198:tv 4198:radio 4198:e2pls 4198:pls 4198:webp", sort = sort)
 		self["filelist"] = self.filelist
 		
 		self.filelist.onSelectionChanged.append(self.selectionChanged)
@@ -395,7 +395,7 @@ class VideoPlayerSimple(Screen, InfoBarAudioSelection, InfoBarSubtitleSupport, I
 		if self.isVisible == False:
 			self.visibility()
 			return
-		self.session.open(MessageBox, '%s' % 'Supported formats :\ndts, mp3, wav, wave, wv, oga, ogg, flac, m4a, mp2, m2a\nwma, ac3, mka, aac, ape, alac, amr, au, mid, mpg, vob\nm4v, mkv, avi, divx, dat, flv, mp4, mov, wmv, asf, 3gp, 3g2\nmpeg, mpe, rm, rmvb, ogm, ogv, m2ts, mts, ts, pva, wtv\nwebm, stream, m3u, m3u8, e2pls, pls, userbouquet.*.tv\nuserbouquet.*.radio\nPicture : jpg, jpeg, jpe, png, bmp, gif, svg, mvi\nDVD : VIDEO_TS, iso, img, nrg', MessageBox.TYPE_INFO, close_on_any_key=True)
+		self.session.open(MessageBox, '%s' % 'Supported formats :\ndts, mp3, wav, wave, wv, oga, ogg, flac, m4a, mp2, m2a\nwma, ac3, mka, aac, ape, alac, amr, au, mid, mpg, vob\nm4v, mkv, avi, divx, dat, flv, mp4, mov, wmv, asf, 3gp, 3g2\nmpeg, mpe, rm, rmvb, ogm, ogv, m2ts, mts, ts, pva, wtv\nwebm, stream, m3u, m3u8, e2pls, pls, userbouquet.*.tv\nuserbouquet.*.radio\nPicture : jpg, jpeg, jpe, png, bmp, gif, svg, mvi, webp (as converted to jpg)\nDVD : VIDEO_TS, iso, img, nrg', MessageBox.TYPE_INFO, close_on_any_key=True)
 		self.session.open(MessageBox, '%s' % 'Picture Player external:\nThumbs:\nLeft/Right/Up/Down : direction\nOK : choose file\nInfo : File/Exif info\n\nPicture Full View:\nRed/Left : previous picture\nBlue/Right : next picture\nGreen/Yellow : play/pause\nInfo : File/Exif info\nMenu : Picture Player menu\n\nPicture Player internal:\nLeft/Right : previous, next picture\nUp : file info\nDown/Exit : leave', MessageBox.TYPE_INFO, close_on_any_key=True)
 		self.session.open(MessageBox, '%s' % 'Audio (yellow) : audio track\nSubtitle : subtitles\nFav, Pvr, Video, Filelist : refresh file list (as set in config)\nTxt : sort name, long : sort name reverse\nRecord : sort size, long : sort size reverse\nTimer : sort date, long : sort date reverse\nRadio : shuffle (reshuffle), long : sort default\nStop : stop playing\nPause : pause/unpause playing\nInfo : File/Dir/System Info, Event View if available (only .ts)\nTV : play TV, long : stop TV\nExit : leave video player, long : leave player without conformation\nHelp : this help', MessageBox.TYPE_INFO, close_on_any_key=True)
 		self.session.open(MessageBox, '%s' % '1/3, 4/6, 7/9 : 15 secs, 60 secs, 300 secs (e2 config) : skipping\n<prev/next> 10 secs, long press (repeated) : skipping\n<</>> 15 mins : skipping\n<</>> long press : manual seek in minutes\nLeft/Right 1-9 secs skipping, long press : repeated skipping\nUp/Down/|</>| : up, down in file list, play previous, next in auto play\nCH+/CH- : one page up, down\n2/5 : 5 pages up, down\n8/0 : list begin, list end\nOK : play (not needed in auto play), long : hide file list\nRed : delete file (use with caution)\nGreen : play with E2 movie player\nBlue : Config\nMenu : hide/show file list, long : hide/show thumb', MessageBox.TYPE_INFO, close_on_any_key=True)
@@ -498,6 +498,12 @@ class VideoPlayerSimple(Screen, InfoBarAudioSelection, InfoBarSubtitleSupport, I
 				print("showiframe error:", e)
 
 			try:
+				if self.filename.lower().endswith('.webp'):
+					self.session.openWithCallback(self.convertConfirmed, MessageBox, "This file cannot be displayed:\n\n'%s'\n\nDo you want to convert it to jpg ?" % (self.filename), list=[("No", False), ("Yes", True)])
+			except:
+				pass
+			
+			try:
 				if self.filename.lower().endswith(('.m3u', '.m3u8')):
 					self.session.nav.stopService()
 					self.session.open(m3uOpen, self.filename)
@@ -505,11 +511,18 @@ class VideoPlayerSimple(Screen, InfoBarAudioSelection, InfoBarSubtitleSupport, I
 				print("m3u(8) file error:", e)
 
 			try:
-				if self.filename.lower().endswith(('.e2pls', '.pls')):
+				if self.filename.lower().endswith('.e2pls'):
 					self.session.nav.stopService()
 					self.session.open(e2plsOpen, self.filename)
 			except Exception as e:
 				print("e2pls file error:", e)
+
+			try:
+				if self.filename.lower().endswith('.pls'):
+					self.session.nav.stopService()
+					self.session.open(plsOpen, self.filename)
+			except Exception as e:
+				print("pls file error:", e)
 			
 			try:
 				if self.filename.lower().endswith(('.tv', '.radio')):
@@ -539,6 +552,25 @@ class VideoPlayerSimple(Screen, InfoBarAudioSelection, InfoBarSubtitleSupport, I
 		if self.filelist.getServiceRef() is not None and self.filelist.getServiceRef().type != 4198:
 			self.session.nav.stopService()
 			self.session.nav.playService(self.filelist.getServiceRef())
+	
+	def convertConfirmed(self, confirmed):
+		if confirmed:
+			if os_path.exists ("/usr/bin/ffmpeg") is True:
+				self.filename2 = self.filename[:-4] + 'jpg'
+				cmd = "/usr/bin/ffmpeg -y -i '%s' -preset ultrafast '%s'" % (self.filename, self.filename2)
+				Console().ePopen(cmd)
+				if os_path.exists (self.filename2) is False:
+					print("this build of ffmpeg does not include a webp codec")
+					self.session.open(MessageBox, "this build of ffmpeg does not include a webp codec", MessageBox.TYPE_ERROR)
+				else:
+					print(("converting .webp to .jpg -> '%s'" % cmd))
+					self.session.open(MessageBox, "finished converting:\n\n'%s'\n\nto\n\n'%s'" % (self.filename, self.filename2), MessageBox.TYPE_INFO, timeout=5)
+					self.updatelist()
+			else:
+				print("ffmpeg not installed")
+				self.session.open(MessageBox, "conversion failed:\n\nffmpeg not installed", MessageBox.TYPE_ERROR)
+		else:
+			self.session.open(MessageBox, "conversion not performed !", MessageBox.TYPE_INFO, timeout=5)
 		
 	def callbackView(self, val=0):
 		if val > 0:
@@ -683,7 +715,7 @@ class VideoPlayerSimple(Screen, InfoBarAudioSelection, InfoBarSubtitleSupport, I
 		for index,count in enumerate(['B', 'KB', 'MB', 'GB']):
 			if size < 1024.0:
 				return "%3.2f %s" % (size, count) if index else "%d %s" % (size, count)
-			size //= 1024.0
+			size /= 1024.0
 		return "%3.2f %s" % (size, 'TB')
 
 	def createResolution(self, serviceInfo):
@@ -739,8 +771,8 @@ class VideoPlayerSimple(Screen, InfoBarAudioSelection, InfoBarSubtitleSupport, I
 				dir_infos = "Directory:  %s" % curSelDir+"\n\n"
 				#dir_infos = dir_infos+"Size:  "+str("%s B" % "{:,d}".format(dir_stats.st_size)+ "    " +self.Humanizer(dir_stats.st_size))+"\n"
 				dir_infos = dir_infos+"Size with subdir(s):  %s" % str(dircontentsize)+"\n"
-				dir_infos = dir_infos+"Last modified:  "+time_strftime("%d.%m.%Y,  %H:%M:%S",time_localtime(dir_stats.st_mtime))+"\n"
-				dir_infos = dir_infos+"Mode:  %s" % oct(dir_stats.st_mode)[-3:]
+				dir_infos = dir_infos+"Last modified:  "+time_strftime("%d.%m.%Y,  %H:%M:%S",time_localtime(dir_stats.st_mtime))
+				#dir_infos = dir_infos+"Mode:  %s" % oct(dir_stats.st_mode)[-3:]
 				dei = self.session.open(MessageBox, dir_infos, MessageBox.TYPE_INFO)
 				dei.setTitle("Dir Info")
 			else:
@@ -758,10 +790,94 @@ class VideoPlayerSimple(Screen, InfoBarAudioSelection, InfoBarSubtitleSupport, I
 			file_infos = "File:  %s" % curSelFile+"\n\n"
 			file_infos = file_infos+"Size:  "+str("%s B" % "{:,d}".format(file_stats.st_size)+ "    " +self.Humanizer(file_stats.st_size))+"\n"
 			file_infos = file_infos+"Last modified:  "+time_strftime("%d.%m.%Y,  %H:%M:%S",time_localtime(file_stats.st_mtime))+"\n"
-			file_infos = file_infos+"Mode:  %s" % oct(file_stats.st_mode)[-3:]+"\n"
+			#file_infos = file_infos+"Mode:  %s" % oct(file_stats.st_mode)[-3:]+"\n"
 			file_infos = file_infos+"Video resolution:\n%s" % str(res)
 			dei = self.session.open(MessageBox, file_infos, MessageBox.TYPE_INFO)
 			dei.setTitle("File Info")
+
+			if curSelFile.lower().endswith('.mp3'):
+				try:
+					from mutagen.id3 import ID3, ID3NoHeaderError
+					from mutagen.mp3 import MP3, HeaderNotFoundError
+					from mutagen import File
+				except ImportError:
+					print(("\ninstall mutagen package, 'install python-mutagen' or 'install python3-mutagen'\n"))
+				
+				try:
+					os_remove('/tmp/cover_temp.jpg')
+				except OSError:
+					pass
+				
+				try:
+					self.audio = ID3(curSelFile)
+				except ID3NoHeaderError:
+					return
+
+				try:
+					self.audio = MP3(curSelFile)
+				except HeaderNotFoundError:
+					return
+
+				try: mArtist = str(self.audio['TPE1'].text[0])
+				except: mArtist = ""
+				try: mTitle = str(self.audio['TIT2'].text[0])
+				except: mTitle = ""
+				try: mAlbum = str(self.audio['TALB'].text[0])
+				except: mAlbum = ""
+				try: mYear = str(self.audio['TDRC'].text[0])
+				except: mYear = ""
+				try: mGenre = str(self.audio['TCON'].text[0])
+				except: mGenre = ""
+				try: mBand = str(self.audio['TPE2'].text[0])
+				except: mBand = ""
+				try: mCompose = str(self.audio['TCOM'].text[0])
+				except: mCompose = ""
+				try: mTrack = str(self.audio['TRCK'].text[0])
+				except: mTrack = ""
+				#try: mComment = str(self.audio['COMM'].text[0])
+				#except: mComment = ""
+				try: mBitrate = str(self.audio.info.bitrate)
+				except: mBitrate = ""
+				try: mSamplerate = str(self.audio.info.sample_rate)
+				except: mSamplerate = ""
+				#try: mLength = str(self.audio.info.length)
+				#except: mLength = ""
+
+				#print(("Artist: '%s'" % self.audio['TPE1'].text[0]))
+				#print(("Title: '%s'" % self.audio['TIT2'].text[0]))
+				#print(("Album: '%s'" % self.audio['TALB'].text[0]))
+				
+				file_infos = "File:  %s" % curSelFile+"\n\n"
+				file_infos = file_infos+"Artist:  %s" % mArtist + "\n"
+				file_infos = file_infos+"Title:  %s" % mTitle + "\n"
+				file_infos = file_infos+"Album:  %s" % mAlbum + "\n"
+				file_infos = file_infos+"Year:  %s" % mYear + "\n"
+				file_infos = file_infos+"Genre:  %s" % mGenre + "\n"
+				file_infos = file_infos+"Band:  %s" % mBand + "\n"
+				file_infos = file_infos+"Compose:  %s" % mCompose + "\n"
+				file_infos = file_infos+"Track:  %s" % mTrack + "\n"
+				#file_infos = file_infos+"Comment:  %s" % mComment + "\n"
+				file_infos = file_infos+"Bitrate:  %s Bps ( bytes per second )" % mBitrate + "\n"
+				file_infos = file_infos+"Samplerate:  %s Hz" % mSamplerate + "\n"
+				#file_infos = file_infos+"Length:  %s secs" % mLength + "\n"
+
+				dei = self.session.open(MessageBox, file_infos, MessageBox.TYPE_INFO)
+				dei.setTitle("mp3 File Info")
+
+				self.picload.setPara((self["thn"].instance.size().width(), self["thn"].instance.size().height(), 1, 1, False, 0, "#FF2C2C39", 1))
+				self.picload.getThumbnail('/tmp/cover_temp.jpg')
+				
+				self.file = File(curSelFile)
+				try: 
+					self.artwork = self.file.tags['APIC:'].data
+					with open('/tmp/cover_temp.jpg', 'wb') as img:
+						img.write(self.artwork)
+				except:
+					pass
+				
+				self.picload.setPara((self["thn"].instance.size().width(), self["thn"].instance.size().height(), 1, 1, False, 0, "#FF2C2C39", 1))
+				self.picload.getThumbnail('/tmp/cover_temp.jpg')
+
 			if curSelFile.endswith(".ts"):
 				from Screens.EventView import EventViewSimple
 				from ServiceReference import ServiceReference
@@ -773,6 +889,9 @@ class VideoPlayerSimple(Screen, InfoBarAudioSelection, InfoBarSubtitleSupport, I
 					self.session.open(EventViewSimple, evt, ServiceReference(serviceref))
 
 	def deleteFile(self):
+		if self.isVisible == False:
+			self.visibility()
+			return
 		self.delpath = self.filelist.getFilename()
 		if self.delpath is not None: 
 			delfilename = self.delpath.rsplit("/",1)[1]
@@ -793,15 +912,15 @@ class VideoPlayerSimple(Screen, InfoBarAudioSelection, InfoBarSubtitleSupport, I
 			if not offline.deleteFromDisk(1):
 				result = True
 		if result == True:
-			self.session.openWithCallback(self.deleteConfirmed_offline, MessageBox, "This file will be permanently deleted:\n\n'%s'\n\n'%s'\n\nAre you shure?" % (name, delfilename), default = False)
+			self.session.openWithCallback(self.deleteConfirmed_offline, MessageBox, "This file will be permanently deleted:\n\n'%s'\n\n'%s'\n\nAre you shure?" % (name, delfilename), list=[("No", False), ("Yes", True)])
 		else:
-			if delfilename.lower().endswith(('.jpg', '.jpeg', '.jpe', '.png', '.gif', '.bmp', '.svg', '.mvi', '.iso', '.img', '.nrg', '.m3u', '.m3u8', '.tv', '.radio', '.e2pls', '.pls')):
+			if delfilename.lower().endswith(('.jpg', '.jpeg', '.jpe', '.png', '.gif', '.bmp', '.svg', '.mvi', '.webp', '.iso', '.img', '.nrg', '.m3u', '.m3u8', '.tv', '.radio', '.e2pls', '.pls')):
 				if self.filelist.getSelectionIndex()!=0:
 					if delfilename == "":
 						pass
 					else:
 						self.delname = self.delpath
-						self.session.openWithCallback(self.deleteFileConfirmed, MessageBox, "This file will be permanently deleted:\n\n'%s'\n\nAre you shure?" % delfilename, default = False)
+						self.session.openWithCallback(self.deleteFileConfirmed, MessageBox, "This file will be permanently deleted:\n\n'%s'\n\nAre you shure?" % delfilename, list=[("No", False), ("Yes", True)])
 				else:
 					pass
 			else:
@@ -847,7 +966,7 @@ class m3uOpen(Screen):
 		Screen.__init__(self, session)
 		
 		self.filelist = []
-		self["filelist"] = m3u_user_list([])
+		self["filelist"] = user_list([])
 
 		self['openList'] = ActionMap(['OkCancelActions', 'ColorActions'],
 		{	#'red': self.del_entry,
@@ -867,10 +986,10 @@ class m3uOpen(Screen):
 		from io import open
 		self.names = []
 		self.urls = []
-		fpage = open(self.name, 'r', encoding='utf-8').read()
+		content = open(self.name, 'r', encoding='utf-8', errors='ignore').read()
 		regexcat = 'EXTINF.*?,(.*?)\\n(.*?)\\n'
-		#match = re.compile(regexcat, re.DOTALL).findall(fpage)
-		match = re.compile(regexcat).findall(str(fpage))
+		#match = re.compile(regexcat, re.DOTALL).findall(content)
+		match = re.compile(regexcat).findall(str(content))
 		for name, url in match:
 			name = unquote(name)
 			url = url.replace(' ', '').replace('\\n', '')
@@ -899,7 +1018,7 @@ class e2plsOpen(Screen):
 		Screen.__init__(self, session)
 		
 		self.filelist = []
-		self["filelist"] = m3u_user_list([])
+		self["filelist"] = user_list([])
 
 		self['openList'] = ActionMap(['OkCancelActions', 'ColorActions'],
 		{	#'red': self.del_entry,
@@ -917,10 +1036,10 @@ class e2plsOpen(Screen):
 	def Opene2pls(self):
 		from io import open
 		self.names = []
-		fpage = open(self.name, 'r', encoding='utf-8').read()
+		content = open(self.name, 'r', encoding='utf-8', errors='ignore').read()
 		regexcat = '4097\:0\:0\:0\:0\:0\:0\:0\:0\:0\:(.*?)\\n'
-		#match = re.compile(regexcat, re.DOTALL).findall(fpage)
-		match = re.compile(regexcat).findall(str(fpage))
+		#match = re.compile(regexcat, re.DOTALL).findall(content)
+		match = re.compile(regexcat).findall(str(content))
 		for name in match:
 			self.names.append(name)
 		showlist(self.names, self['filelist'])
@@ -938,13 +1057,64 @@ class e2plsOpen(Screen):
 	def cancel(self):
 		Screen.close(self, False)
 
+class plsOpen(Screen):
+	def __init__(self, session, name):
+		self.skin = VideoPlayerSimple.skin
+		Screen.__init__(self, session)
+		
+		self.filelist = []
+		self["filelist"] = user_list([])
+
+		self['openList'] = ActionMap(['OkCancelActions', 'ColorActions'],
+		{	#'red': self.del_entry,
+			'green': self.okClicked,
+			'blue': self.okClicked,
+			'cancel': self.cancel,
+			'ok': self.okClicked
+		}, -2)
+        
+		self['currentfolder'] = Label('')
+		self['currentfolder'].setText('')
+		self.name = name
+		self.onLayoutFinish.append(self.Openpls)
+
+	def Openpls(self):
+		from six.moves.urllib.parse import unquote
+		from io import open
+		self.names = []
+		self.urls = []
+		content = open(self.name, 'r', encoding='utf-8', errors='ignore').read() #py3 and py2 with from io import open
+		regexcat = 'File.*?=(.*?)\\n.*?=(.*?)\\n'
+		#match = re.compile(regexcat,re.DOTALL).findall(content)
+		match = re.compile(regexcat).findall(str(content))
+		for url, name in match:
+			name = unquote(name)
+			self.names.append(name)
+			self.urls.append(url)
+		showlist(self.names, self["filelist"])
+		self['currentfolder'].setText(self.name + "  ( " + str(len(self.names)) + ' streams found )')
+
+	def okClicked(self):
+		idx = self['filelist'].getSelectionIndex()
+		if idx is None:
+			return
+		else:
+			name = self.names[idx]
+			url = self.urls[idx]
+			ref = eServiceReference(4097, 0, url)
+			ref.setName(name)
+			self.session.open(MoviePlayer, ref)
+			
+	def cancel(self):
+		Screen.close(self, False)
+
 class userbouquetOpen(Screen):
 	def __init__(self, session, name):
 		self.skin = VideoPlayerSimple.skin
 		Screen.__init__(self, session)
 		
 		self.filelist = []
-		self["filelist"] = m3u_user_list([])
+		self["filelist"] = user_list([])
 
 		self['openList'] = ActionMap(['OkCancelActions', 'ColorActions'],
 		{	#'red': self.del_entry,
@@ -964,7 +1134,7 @@ class userbouquetOpen(Screen):
 		from io import open
 		self.names = []
 		self.urls = []
-		content = open(self.name, 'r', encoding='utf-8').read() #py3 and py2 with from io import open
+		content = open(self.name, 'r', encoding='utf-8', errors='ignore').read() #py3 and py2 with from io import open
 		#content = open(self.name, 'r').read().decode('UTF-8') #only py2
 		if config.plugins.videoplayersimple.iptvdescription.value == True:
 			regexcat = '#SERVICE [^hmrSsYy]+(.*?)\:(.*?)\\n' # from the first occurance of "(h)ttp", "(m)ms", "(r)tm(p)", "rtp(s)", "(Ss)treamlink", "(Yy)T-DL(P)" and before last occurance of ":", phew!, took me hours
@@ -997,7 +1167,7 @@ class userbouquetOpen(Screen):
 	def cancel(self):
 		Screen.close(self, False)
 
-class m3u_user_list(MenuList):
+class user_list(MenuList):
 	def __init__(self, list):
 		MenuList.__init__(self, list, True, eListboxPythonMultiContent)
 		if (getDesktop(0).size().width() >= 1920):

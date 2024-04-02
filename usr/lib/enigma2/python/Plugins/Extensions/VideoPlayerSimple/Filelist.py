@@ -74,6 +74,7 @@ EXTENSIONS = {
 		"gif": "picture",
 		"bmp": "picture",
 		"svg": "picture",
+		"webp": "picture",
 		"mvi": "picture"
 	}
 
