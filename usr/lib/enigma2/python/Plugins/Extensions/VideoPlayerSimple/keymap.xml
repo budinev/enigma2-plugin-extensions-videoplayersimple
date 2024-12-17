@@ -42,6 +42,9 @@
 		<key id="KEY_PROGRAM" mapto="vp_datereverse" flags="l" />
 		<key id="KEY_RECORD" mapto="vp_size" flags="b" />
 		<key id="KEY_RECORD" mapto="vp_sizereverse" flags="l" />
+		<key id="KEY_EPG" mapto="vp_searchfile" flags="l" />
+		<key id="KEY_BACK" mapto="vp_cutlistedit" flags="b" />
+		<key id="KEY_BACK" mapto="vp_deletecuts" flags="l" />
 		<key id="KEY_1" mapto="vp_1" flags="m" />
 		<key id="KEY_3" mapto="vp_3" flags="m" />
 		<key id="KEY_4" mapto="vp_4" flags="m" />

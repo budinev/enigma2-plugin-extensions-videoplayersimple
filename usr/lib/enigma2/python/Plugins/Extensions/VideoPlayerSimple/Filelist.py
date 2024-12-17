@@ -64,6 +64,7 @@ EXTENSIONS = {
 		"tv": "movie",
 		"e2pls": "movie",
 		"pls": "movie",
+		"txt": "movie",
 		"iso": "movie",
 		"img": "movie",
 		"nrg": "movie",
