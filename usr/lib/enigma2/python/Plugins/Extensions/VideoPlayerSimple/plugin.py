@@ -406,7 +406,7 @@ class VideoPlayerSimple(Screen, InfoBarAudioSelection, InfoBarSubtitleSupport, I
 		if self.isVisible == False:
 			self.visibility()
 			return
-		self.session.open(MessageBox, '%s' % 'Supported formats :\ndts, mp3, wav, wave, wv, oga, ogg, flac, m4a, mp2, m2a\nwma, ac3, mka, aac, ape, alac, amr, au, mid, mpg, vob\nm4v, mkv, avi, divx, dat, flv, mp4, mov, wmv, asf, 3gp, 3g2\nmpeg, mpe, rm, rmvb, ogm, ogv, m2ts, mts, ts, pva, wtv\nwebm, stream, m3u, m3u8, e2pls, pls, txt (url links)\nuserbouquet.*.tv\nuserbouquet.*.radio\nPicture : jpg, jpeg, jpe, png, bmp, gif, svg, mvi\nwebp (as converted to jpg)\nDVD : VIDEO_TS, iso, img, nrg', MessageBox.TYPE_INFO, close_on_any_key=True)
+		self.session.open(MessageBox, '%s' % 'Supported formats :\ndts, mp3, wav, wave, wv, oga, ogg, flac, m4a, mp2, m2a\nwma, ac3, mka, aac, ape, alac, amr, au, mid, mpg, vob\nm4v, mkv, avi, divx, dat, flv, mp4, mov, wmv, asf, 3gp, 3g2\nmpeg, mpe, rm, rmvb, ogm, ogv, m2ts, mts, ts, pva, wtv\nwebm, stream, m3u, m3u8, e2pls, pls\ntxt (open http(s) links, view small txt files)\nuserbouquet.*.tv\nuserbouquet.*.radio\nPicture : jpg, jpeg, jpe, png, bmp, gif, svg, mvi\nwebp (as converted to jpg)\nDVD : VIDEO_TS, iso, img, nrg', MessageBox.TYPE_INFO, close_on_any_key=True)
 		self.session.open(MessageBox, '%s' % 'Picture Player external:\nThumbs:\nLeft/Right/Up/Down : direction\nOK : choose file\nInfo : File/Exif info\n\nPicture Full View:\nRed/Left : previous picture\nBlue/Right : next picture\nGreen/Yellow : play/pause\nInfo : File/Exif info\nMenu : Picture Player menu\n\nPicture Player internal:\nLeft/Right : previous, next picture\nUp : file info\nDown/Exit : leave', MessageBox.TYPE_INFO, close_on_any_key=True)
 		self.session.open(MessageBox, '%s' % 'Audio (yellow) : audio track\nSubtitle : subtitles\nFav, Pvr, Video, Filelist : refresh file list (as set in config)\nTxt : sort name, long : sort name reverse\nRecord : sort size, long : sort size reverse\nTimer : sort date, long : sort date reverse\nRadio : shuffle (reshuffle), long : sort default\nStop : stop playing\nPause : pause/unpause playing\nInfo : File/Dir/System Info, Event View if available (only .ts)\nTV : play TV, long : stop TV\nEpg long : search for file(s) in the file list\nBack : invoke Cutlist editor, long : delete .cuts file\nExit : leave video player, long : leave player without conformation\nHelp : this help', MessageBox.TYPE_INFO, close_on_any_key=True)
 		self.session.open(MessageBox, '%s' % '1/3, 4/6, 7/9 : 15 secs, 60 secs, 300 secs (e2 config) : skipping\n<prev/next> 10 secs, long press (repeated) : skipping\n<</>> 15 mins : skipping\n<</>> long press : manual seek in minutes\nLeft/Right 1-9 secs skipping, long press : repeated skipping\nUp/Down/|</>| : up, down in file list, play previous, next in auto play\nCH+/CH- : one page up, down\n2/5 : 5 pages up, down\n8/0 : list begin, list end\nOK : play (not needed in auto play), long : hide file list\nRed : delete file / empty .Trash can (use with caution)\nGreen : play with E2 movie player\nBlue : Config\nMenu : hide/show file list, long : hide/show thumb', MessageBox.TYPE_INFO, close_on_any_key=True)
@@ -1412,7 +1412,7 @@ class txtOpen(Screen):
 		self.currentList = 'filelist'
 		self.hideflag = True
 
-		self['openList'] = ActionMap(['OkCancelActions', 'ColorActions', 'MenuActions', 'NumberActions', 'ChannelSelectBaseActions'],
+		self['openList'] = ActionMap(['OkCancelActions', 'ColorActions', 'MenuActions', 'NumberActions', 'ChannelSelectBaseActions', 'InfobarTeletextActions'],
 		{	#'red': self.del_entry,
 			'8': self.listbegin,
 			'0': self.listend,
@@ -1422,6 +1422,7 @@ class txtOpen(Screen):
 			'cancel': self.cancel,
 			'prevBouquet': self.chDown,
 			'nextBouquet': self.chUp,
+			'startTeletext': self.showLine,
 			'ok': self.okClicked
 		}, -2)
         
@@ -1435,15 +1436,14 @@ class txtOpen(Screen):
 		from io import open
 		self.names = []
 		content = open(self.name, 'r', encoding='utf-8', errors='ignore').read() #py3 and py2 with from io import open
-		regexcat = '(http.*?)\\n'
-		#match = re.compile(regexcat,re.DOTALL).findall(content)
+		regexcat = '(.*?)\\n'
 		match = re.compile(regexcat).findall(str(content))
 		for name in match:
 			name = unquote(name)
 			self.names.append(name)
 		showlist(self.names, self["filelist"])
-		self['currentfolder'].setText(self.name + "  ( " + str(len(self.names)) + ' streams found )')
-
+		self['currentfolder'].setText(self.name + "  ( " + str(len(self.names)) + ' streams / lines found )')
+			
 	def chUp(self):
 		for x in range(5):
 			self[self.currentList].pageUp()
@@ -1470,6 +1470,14 @@ class txtOpen(Screen):
 			self.hideflag = True
 			self.show()
 
+	def showLine(self):
+		idx = self['filelist'].getSelectionIndex()
+		if idx is None:
+			return None
+		else:
+			self.viewLine = self.names[idx]
+		self.session.open(MessageBox, "%s" % self.viewLine, MessageBox.TYPE_MESSAGE, simple=True)
+		
 	def okClicked(self):
 		idx = self['filelist'].getSelectionIndex()
 		if idx is None:
