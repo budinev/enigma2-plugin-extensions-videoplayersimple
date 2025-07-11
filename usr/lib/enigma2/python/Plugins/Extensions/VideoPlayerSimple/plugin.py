@@ -20,7 +20,7 @@ from Screens.MessageBox import MessageBox
 from Screens.MinuteInput import MinuteInput
 from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Components.Pixmap import Pixmap
-#from Components.AVSwitch import AVSwitch
+# from Components.AVSwitch import AVSwitch
 from Components.Sources.StaticText import StaticText
 from Components.MenuList import MenuList
 from Components.MultiContent import MultiContentEntryText
@@ -290,6 +290,7 @@ class VideoPlayerSimple(Screen, InfoBarAudioSelection, InfoBarSubtitleSupport, I
 		
 		self.filelist.onSelectionChanged.append(self.selectionChanged)
 		self["currentfolder"].setText(self.filelist.getCurrentDirectory())
+		# self["currentfolder"].setText(str(self.filelist.getCurrentDirectory()).strip('None') + "  ( " + str(len(self.filelist.getFileList())) + ' file(s) )')
 		
 		self.VideoTimer = eTimer()
 		self.VideoTimer.callback.append(self.showVideo)
@@ -315,21 +316,24 @@ class VideoPlayerSimple(Screen, InfoBarAudioSelection, InfoBarSubtitleSupport, I
 		if self.isVisible == False:
 			self.visibility()
 			return
+	
 	def showThumb(self):
 		if not self.filelist.canDescent():
 			if self.filelist.getCurrentDirectory() and self.filelist.getFilename():
 				if self.picload.getThumbnail(self.filelist.getFilename()) == 1:
 					self.ThumbTimer.start(500, True)
 	
-	def toggleThumb(self):
-		if self["label"].getText() == "":
-			self.showThumb()
-		else:
+	def toggleThumb(self, force = 1):
+		if self.isVisible == True:
+			self.isVisible = False
 			self["label"].setText("")
 			self["thn"].hide()
+		else:	
+			self.isVisible = True
+			self["thn"].show()
 
 	def setConf(self, retval=None):
-		#width, height, aspectRatio, as, useCache, resizeType, bg_str, auto_orientation
+		# width, height, aspectRatio, as, useCache, resizeType, bg_str, auto_orientation
 		self.picload.setPara((self["thn"].instance.size().width(), self["thn"].instance.size().height(), 1, 1, False, 0, "#FF2C2C39", 1))
 
 	def seekRelative(self, direction, amount):
@@ -408,11 +412,12 @@ class VideoPlayerSimple(Screen, InfoBarAudioSelection, InfoBarSubtitleSupport, I
 			return
 		self.session.open(MessageBox, '%s' % 'Supported formats :\ndts, mp3, wav, wave, wv, oga, ogg, flac, m4a, mp2, m2a\nwma, ac3, mka, aac, ape, alac, amr, au, mid, mpg, vob\nm4v, mkv, avi, divx, dat, flv, mp4, mov, wmv, asf, 3gp, 3g2\nmpeg, mpe, rm, rmvb, ogm, ogv, m2ts, mts, ts, pva, wtv\nwebm, stream, m3u, m3u8, e2pls, pls\ntxt (open http(s) links, view small txt files)\nuserbouquet.*.tv\nuserbouquet.*.radio\nPicture : jpg, jpeg, jpe, png, bmp, gif, svg, mvi\nwebp (as converted to jpg)\nDVD : VIDEO_TS, iso, img, nrg', MessageBox.TYPE_INFO, close_on_any_key=True)
 		self.session.open(MessageBox, '%s' % 'Picture Player external:\nThumbs:\nLeft/Right/Up/Down : direction\nOK : choose file\nInfo : File/Exif info\n\nPicture Full View:\nRed/Left : previous picture\nBlue/Right : next picture\nGreen/Yellow : play/pause\nInfo : File/Exif info\nMenu : Picture Player menu\n\nPicture Player internal:\nLeft/Right : previous, next picture\nUp : file info\nDown/Exit : leave', MessageBox.TYPE_INFO, close_on_any_key=True)
-		self.session.open(MessageBox, '%s' % 'Audio (yellow) : audio track\nSubtitle : subtitles\nFav, Pvr, Video, Filelist : refresh file list (as set in config)\nTxt : sort name, long : sort name reverse\nRecord : sort size, long : sort size reverse\nTimer : sort date, long : sort date reverse\nRadio : shuffle (reshuffle), long : sort default\nStop : stop playing\nPause : pause/unpause playing\nInfo : File/Dir/System Info, Event View if available (only .ts)\nTV : play TV, long : stop TV\nEpg long : search for file(s) in the file list\nBack : invoke Cutlist editor, long : delete .cuts file\nExit : leave video player, long : leave player without conformation\nHelp : this help', MessageBox.TYPE_INFO, close_on_any_key=True)
-		self.session.open(MessageBox, '%s' % '1/3, 4/6, 7/9 : 15 secs, 60 secs, 300 secs (e2 config) : skipping\n<prev/next> 10 secs, long press (repeated) : skipping\n<</>> 15 mins : skipping\n<</>> long press : manual seek in minutes\nLeft/Right 1-9 secs skipping, long press : repeated skipping\nUp/Down/|</>| : up, down in file list, play previous, next in auto play\nCH+/CH- : one page up, down\n2/5 : 5 pages up, down\n8/0 : list begin, list end\nOK : play (not needed in auto play), long : hide file list\nRed : delete file / empty .Trash can (use with caution)\nGreen : play with E2 movie player\nBlue : Config\nMenu : hide/show file list, long : hide/show thumb', MessageBox.TYPE_INFO, close_on_any_key=True)
+		self.session.open(MessageBox, '%s' % 'Audio (yellow) : audio track\nSubtitle : subtitles\nFav, Pvr, Video, Filelist : refresh file list (as set in config)\nTxt : sort name, long : sort name reverse\nTxt : in .txt mode show long line wrapped\nTxt : in .m3u(8), .tv, .radio list search for entries (expt)\nRecord : sort size, long : sort size reverse\nTimer : sort date, long : sort date reverse\nRadio : shuffle (reshuffle), long : sort default\nStop : stop playing\nPause : pause/unpause playing\nInfo : File/Dir/System Info, Event View if available (only .ts)\nTV : play TV, long : stop TV\nEpg long : search for file(s) in the file list\nBack : invoke Cutlist editor, long : delete .cuts file\nExit : leave video player, long : leave player without conformation\nHelp : this help', MessageBox.TYPE_INFO, close_on_any_key=True)
+		self.session.open(MessageBox, '%s' % '1/3, 4/6, 7/9 : 15 secs, 60 secs, 300 secs (e2 config) : skipping\n<prev/next> 10 secs, long press (repeated) : skipping\n<prev/next> in .radio bouquet mode show stream titles, 7/9 : OK\n<</>> 15 mins : skipping\n<</>> long press : manual seek in minutes\nLeft/Right 1-9 secs skipping, long press : repeated skipping\nUp/Down/|</>| : up, down in file list, play previous, next in auto play\nCH+/CH- : one page up, down\n2/5 : 5 pages up, down\n8/0 : list begin, list end\nOK : play (not needed in auto play), long : hide file list\nRed : delete file / empty .Trash can (use with caution)\nGreen : play with E2 movie player\nBlue : Config\nMenu : hide/show file list, long : hide/show thumb', MessageBox.TYPE_INFO, close_on_any_key=True)
 
 	def selectionChanged(self):
 		self["currentfolder"].setText(self.filelist.getCurrentDirectory())
+		# self["currentfolder"].setText(str(self.filelist.getCurrentDirectory()).strip('None') + "  ( " + str(len(self.filelist.getFileList())) + ' file(s) )')
 		self.ThumbTimer.stop()
 		
 	def up(self):
@@ -482,18 +487,18 @@ class VideoPlayerSimple(Screen, InfoBarAudioSelection, InfoBarSubtitleSupport, I
 				if self.filename.lower().endswith(('.jpg', '.jpeg', '.jpe', '.png', '.gif', '.bmp', '.svg')):
 					if config.plugins.videoplayersimple.pictureplayer.value == False:
 						from Plugins.Extensions.PicturePlayer import ui
-						#this doesn´t work, any idea !!!
-						#cannot concatenate 'str' and 'eServiceReference'
-						#self.session.openWithCallback(self.callbackView, ui.Pic_Thumb, self.filelist.getFileList(), self.filelist.getSelectionIndex(), self.filelist.getCurrentDirectory())
-						#self.session.openWithCallback(self.callbackView, ui.Pic_Full_View, self.filelist.getFileList(), self.filelist.getSelectionIndex(), self.filelist.getCurrentDirectory())
-						#workaround
+						# this doesn´t work, any idea !!!
+						# cannot concatenate 'str' and 'eServiceReference'
+						# self.session.openWithCallback(self.callbackView, ui.Pic_Thumb, self.filelist.getFileList(), self.filelist.getSelectionIndex(), self.filelist.getCurrentDirectory())
+						# self.session.openWithCallback(self.callbackView, ui.Pic_Full_View, self.filelist.getFileList(), self.filelist.getSelectionIndex(), self.filelist.getCurrentDirectory())
+						# workaround
 						from Components.FileList import FileList as Filelist
 						self.tempfl = Filelist("/", matchingPattern = "(?i)^.*\.(jpeg|jpg|jpe|png|bmp|gif|svg)")
 						self.filelist.refresh("alpha")
-						#self.filelist.refresh("shuffle")
+						# self.filelist.refresh("shuffle")
 						self.tempfl.changeDir(self.filelist.getCurrentDirectory())
 						self.session.openWithCallback(self.callbackView, ui.Pic_Thumb, self.tempfl.getFileList(), self.filelist.getSelectionIndex(), self.filelist.getCurrentDirectory())
-						#self.session.openWithCallback(self.callbackView, ui.Pic_Full_View, self.tempfl.getFileList(), 0, self.filelist.getCurrentDirectory())
+						# self.session.openWithCallback(self.callbackView, ui.Pic_Full_View, self.tempfl.getFileList(), 0, self.filelist.getCurrentDirectory())
 					else:
 						self.session.openWithCallback(self.callbackView, PictureExplorer, self.filename, self.filelist.getCurrentDirectory())
 			except Exception as e:
@@ -542,11 +547,18 @@ class VideoPlayerSimple(Screen, InfoBarAudioSelection, InfoBarSubtitleSupport, I
 				print("pls file error:", e)
 			
 			try:
-				if self.filename.lower().endswith(('.tv', '.radio')):
+				if self.filename.lower().endswith('.tv'):
 					self.session.nav.stopService()
-					self.session.open(userbouquetOpen, self.filename)
+					self.session.open(userbouquetTvOpen, self.filename)
 			except Exception as e:
-				print("userbouquet file error:", e)
+				print("userbouquet .tv file error:", e)
+
+			try:
+				if self.filename.lower().endswith('.radio'):
+					self.session.nav.stopService()
+					self.session.open(userbouquetRadioOpen, self.filename)
+			except Exception as e:
+				print("userbouquet .radio file error:", e)
 
 			try:
 				if self.filename.lower().endswith(('.iso', '.img', '.nrg')) or self.filename.upper().endswith('VIDEO_TS/'):
@@ -607,7 +619,7 @@ class VideoPlayerSimple(Screen, InfoBarAudioSelection, InfoBarSubtitleSupport, I
 				if self.filelist.getServiceRef() is not None:
 					self.session.open(MoviePlayer, self.filelist.getServiceRef())
 			
-	def visibility(self, force=1):
+	def visibility(self, force = 1):
 		if self.isVisible == True:
 			self.isVisible = False
 			self.hide()
@@ -618,47 +630,47 @@ class VideoPlayerSimple(Screen, InfoBarAudioSelection, InfoBarSubtitleSupport, I
 	def updatelist(self):
 		sort = config.plugins.videoplayersimple.sortmode.enabled.value
 		self.filelist.refresh(sort)
-		#self.filelist.moveToIndex(0)
+		# self.filelist.moveToIndex(0)
 
 	def hotkeyShuffle(self):
 		sort = "shuffle"
 		self.filelist.refresh(sort)
-		#self.filelist.moveToIndex(0)
+		# self.filelist.moveToIndex(0)
 
 	def hotkeyDefault(self):
 		sort = "default"
 		self.filelist.refresh(sort)
-		#self.filelist.moveToIndex(0)
+		# self.filelist.moveToIndex(0)
 
 	def hotkeyName(self):
 		sort = "alpha"
 		self.filelist.refresh(sort)
-		#self.filelist.moveToIndex(0)
+		# self.filelist.moveToIndex(0)
 	
 	def hotkeyNamereverse(self):
 		sort = "alphareverse"
 		self.filelist.refresh(sort)
-		#self.filelist.moveToIndex(0)
+		# self.filelist.moveToIndex(0)
 
 	def hotkeySize(self):
 		sort = "size"
 		self.filelist.refresh(sort)
-		#self.filelist.moveToIndex(0)
+		# self.filelist.moveToIndex(0)
 
 	def hotkeySizereverse(self):
 		sort = "sizereverse"
 		self.filelist.refresh(sort)
-		#self.filelist.moveToIndex(0)
+		# self.filelist.moveToIndex(0)
 
 	def hotkeyDate(self):
 		sort = "date"
 		self.filelist.refresh(sort)
-		#self.filelist.moveToIndex(0)
+		# self.filelist.moveToIndex(0)
 
 	def hotkeyDatereverse(self):
 		sort = "datereverse"
 		self.filelist.refresh(sort)
-		#self.filelist.moveToIndex(0)
+		# self.filelist.moveToIndex(0)
 
 	def searchFile(self):
 		if self.isVisible == False:
@@ -683,6 +695,7 @@ class VideoPlayerSimple(Screen, InfoBarAudioSelection, InfoBarSubtitleSupport, I
 				else:
 					self["filelist"].l.setList(newList)
 					self["filelist"].moveToIndex(0)
+					self["currentfolder"].setText(str(self.filelist.getCurrentDirectory()) + "  ( " + str(len(newList)) + ' file(s) found )')
 			except Exception as e:
 				self.session.open(MessageBox, "Error", MessageBox.TYPE_INFO, timeout=5)
 				print(e)
@@ -859,10 +872,10 @@ class VideoPlayerSimple(Screen, InfoBarAudioSelection, InfoBarSubtitleSupport, I
 				dircontentsize = self.dirContentSize(curSelDir)
 				dir_stats = os_stat(curSelDir)
 				dir_infos = "Directory:  %s" % curSelDir+"\n\n"
-				#dir_infos = dir_infos+"Size:  "+str("%s B" % "{:,d}".format(dir_stats.st_size)+ "    " +self.Humanizer(dir_stats.st_size))+"\n"
+				# dir_infos = dir_infos+"Size:  "+str("%s B," % "{:,d}".format(dir_stats.st_size)+ "    " +self.Humanizer(dir_stats.st_size))+"\n"
 				dir_infos = dir_infos+"Size with subdir(s):  %s" % str(dircontentsize)+"\n"
 				dir_infos = dir_infos+"Last modified:  "+time_strftime("%d.%m.%Y,  %H:%M:%S",time_localtime(dir_stats.st_mtime))
-				#dir_infos = dir_infos+"Mode:  %s" % oct(dir_stats.st_mode)[-3:]
+				# dir_infos = dir_infos+"Mode:  %s" % oct(dir_stats.st_mode)[-3:]
 				dei = self.session.open(MessageBox, dir_infos, MessageBox.TYPE_INFO)
 				dei.setTitle("Dir Info")
 			else:
@@ -871,6 +884,7 @@ class VideoPlayerSimple(Screen, InfoBarAudioSelection, InfoBarSubtitleSupport, I
 		else:
 			res = ""
 			dur = 0
+			cover = '/tmp/cover_temp.jpg'
 			curSelFile = self.filelist.getFilename()
 			service = self.session.nav.getCurrentService()
 			
@@ -884,14 +898,16 @@ class VideoPlayerSimple(Screen, InfoBarAudioSelection, InfoBarSubtitleSupport, I
 						pass
 
 			file_stats = os_stat(curSelFile)
-			file_infos = "File:  %s" % curSelFile+"\n\n"
-			file_infos = file_infos+"Size:  "+str("%s B" % "{:,d}".format(file_stats.st_size)+ "    " +self.Humanizer(file_stats.st_size))+"\n"
+			file_infos = "Dir:  %s ,    %s file(s)" % (str(self.filelist.getCurrentDirectory()), str(len(self.filelist.getFileList())))+"\n\n"
+			# file_infos = "File:  %s" % curSelFile+"\n\n"
+			file_infos = file_infos+"File:  %s" % curSelFile+"\n\n"
+			file_infos = file_infos+"Size:  "+str("%s B," % "{:,d}".format(file_stats.st_size)+ "    " +self.Humanizer(file_stats.st_size))+"\n"
 			file_infos = file_infos+"Last modified:  "+time_strftime("%d.%m.%Y,  %H:%M:%S",time_localtime(file_stats.st_mtime))+"\n"
-			#file_infos = file_infos+"Mode:  %s" % oct(file_stats.st_mode)[-3:]+"\n"
+			# file_infos = file_infos+"Mode:  %s" % oct(file_stats.st_mode)[-3:]+"\n"
 			file_infos = file_infos+"Duration:  %d:%02d:%02d" % (dur//3600, dur%3600//60, dur%60) + "\n"
 			file_infos = file_infos+"Video resolution:\n%s" % str(res)
 			dei = self.session.open(MessageBox, file_infos, MessageBox.TYPE_INFO)
-			dei.setTitle("File Info")
+			dei.setTitle("Dir / File Info")
 
 			if curSelFile.lower().endswith('.mp3'):
 				try:
@@ -899,10 +915,11 @@ class VideoPlayerSimple(Screen, InfoBarAudioSelection, InfoBarSubtitleSupport, I
 					from mutagen.mp3 import MP3, HeaderNotFoundError
 					from mutagen import File
 				except ImportError:
+					self.session.open(MessageBox, "install mutagen package !\nopkg install python-mutagen\nor\nopkg install python3-mutagen", MessageBox.TYPE_INFO, timeout=5)
 					print(("\ninstall mutagen package, 'opkg install python-mutagen' or 'opkg install python3-mutagen'\n"))
 				
 				try:
-					os_remove('/tmp/cover_temp.jpg')
+					os_remove(cover)
 				except os_error:
 					pass
 				
@@ -932,18 +949,18 @@ class VideoPlayerSimple(Screen, InfoBarAudioSelection, InfoBarSubtitleSupport, I
 				except: mCompose = ""
 				try: mTrack = str(self.audio['TRCK'].text[0])
 				except: mTrack = ""
-				#try: mComment = str(self.audio['COMM'].text[0])
-				#except: mComment = ""
+				# try: mComment = str(self.audio['COMM'].text[0])
+				# except: mComment = ""
 				try: mBitrate = str(self.audio.info.bitrate)
 				except: mBitrate = ""
 				try: mSamplerate = str(self.audio.info.sample_rate)
 				except: mSamplerate = ""
-				#try: mLength = str(self.audio.info.length)
-				#except: mLength = ""
+				# try: mLength = str(self.audio.info.length)
+				# except: mLength = ""
 
-				#print(("Artist: '%s'" % self.audio['TPE1'].text[0]))
-				#print(("Title: '%s'" % self.audio['TIT2'].text[0]))
-				#print(("Album: '%s'" % self.audio['TALB'].text[0]))
+				# print(("Artist: '%s'" % self.audio['TPE1'].text[0]))
+				# print(("Title: '%s'" % self.audio['TIT2'].text[0]))
+				# print(("Album: '%s'" % self.audio['TALB'].text[0]))
 				
 				file_infos = "File:  %s" % curSelFile+"\n\n"
 				file_infos = file_infos+"Artist:  %s" % mArtist + "\n"
@@ -954,33 +971,31 @@ class VideoPlayerSimple(Screen, InfoBarAudioSelection, InfoBarSubtitleSupport, I
 				file_infos = file_infos+"Band:  %s" % mBand + "\n"
 				file_infos = file_infos+"Compose:  %s" % mCompose + "\n"
 				file_infos = file_infos+"Track:  %s" % mTrack + "\n"
-				#file_infos = file_infos+"Comment:  %s" % mComment + "\n"
+				# file_infos = file_infos+"Comment:  %s" % mComment + "\n"
 				file_infos = file_infos+"Bitrate:  %s Bps ( bytes per second )" % mBitrate + "\n"
 				file_infos = file_infos+"Samplerate:  %s Hz" % mSamplerate + "\n"
-				#file_infos = file_infos+"Length:  %s secs" % mLength + "\n"
+				# file_infos = file_infos+"Length:  %s secs" % mLength + "\n"
+
+				dei = self.session.open(MessageBox, file_infos, MessageBox.TYPE_INFO)
+				dei.setTitle("mp3 File Info")
 
 				try:
 					ulyrics = ID3(curSelFile).getall('USLT')[0]
-					#print('lyrics ->\n%s' % ulyrics)
+					# print('lyrics ->\n%s' % ulyrics)
 					dei = self.session.open(MessageBox, str(ulyrics), MessageBox.TYPE_INFO)
 					dei.setTitle("mp3 Lyrics")
 				except:
 					pass
 				
-				dei = self.session.open(MessageBox, file_infos, MessageBox.TYPE_INFO)
-				dei.setTitle("mp3 File Info")
-				
 				self.file = File(curSelFile)
 				try: 
 					self.artwork = self.file.tags['APIC:'].data
-					with open('/tmp/cover_temp.jpg', 'wb') as img:
+					with open(cover, 'wb') as img:
 						img.write(self.artwork)
+					self.picload.getThumbnail(cover)
 				except:
 					pass
 				
-				self.picload.setPara((self["thn"].instance.size().width(), self["thn"].instance.size().height(), 1, 1, False, 0, "#FF2C2C39", 1))
-				self.picload.getThumbnail('/tmp/cover_temp.jpg')
-
 			if curSelFile.endswith(".ts"):
 				from Screens.EventView import EventViewSimple
 				from ServiceReference import ServiceReference
@@ -1006,7 +1021,7 @@ class VideoPlayerSimple(Screen, InfoBarAudioSelection, InfoBarSubtitleSupport, I
 			return
 		if self.service.type != 4098 and self.session.nav.getCurrentlyPlayingServiceReference() is not None:
 			if self.service == self.session.nav.getCurrentlyPlayingServiceReference():
-				#self.session.nav.playService(None)
+				# self.session.nav.playService(None)
 				self.StopPlayback()
 		serviceHandler = eServiceCenter.getInstance()
 		offline = serviceHandler.offlineOperations(self.service)
@@ -1035,8 +1050,8 @@ class VideoPlayerSimple(Screen, InfoBarAudioSelection, InfoBarSubtitleSupport, I
 	def emptyTrash(self, confirmed):
 		if confirmed:
 			trash = self.delpath
-			order = 'rm -f \"' + trash + '\"*' #empty trash can
-			#order = 'rm -r \"' + trash + '\"' #delete trash can
+			order = 'rm -f \"' + trash + '\"*' # empty trash can
+			# order = 'rm -r \"' + trash + '\"' # delete trash can
 			try:
 				os_system(order)
 			except os_error as oe:
@@ -1086,6 +1101,7 @@ class m3uOpen(Screen):
 		self["filelist"] = user_list([])
 		self.currentList = 'filelist'
 		self.hideflag = True
+		
 		try: fwd15 = lambda: self.seekRelative(1, config.seek.selfdefined_13.value * 90000)
 		except: pass
 		try: back15 = lambda: self.seekRelative(-1, config.seek.selfdefined_13.value * 90000)
@@ -1105,8 +1121,8 @@ class m3uOpen(Screen):
 		try: fwd10 = lambda: self.seekRelative(1, 10 * 90000)
 		except: pass
 
-		self['openList'] = ActionMap(['OkCancelActions', 'ColorActions', 'MenuActions', 'NumberActions', 'EPGSelectActions', 'ChannelSelectBaseActions', 'ChannelSelectEPGActions'],
-		{	#'red': self.del_entry,
+		self['openList'] = ActionMap(['OkCancelActions', 'ColorActions', 'MenuActions', 'NumberActions', 'ChannelSelectBaseActions', 'ChannelSelectEPGActions', 'InfobarTeletextActions'],
+		{	# 'red': self.del_entry,
 			'1': back15, 
 			'3': fwd15,
 			'4': back60,
@@ -1118,10 +1134,8 @@ class m3uOpen(Screen):
 			'prevService': back10,
 			'nextService': fwd10,
 			'menu': self.listtoggle,
-			'green': self.okClicked,
-			'blue': self.okClicked,
 			'cancel': self.cancel,
-			#'epg': self.searchFile,
+			'startTeletext': self.searchEntry,
 			'prevBouquet': self.chDown,
 			'nextBouquet': self.chUp,
 			'ok': self.okClicked
@@ -1138,10 +1152,10 @@ class m3uOpen(Screen):
 		self.names = []
 		self.urls = []
 		content = open(self.name, 'r', encoding='utf-8', errors='ignore').read()
-		#content = content.replace('#EXTVLCOPT:http-user-agent=VAVOO/2.6\n', '')
-		##content = re.sub('#EXTVLCOPT:http-user-agent=VAVOO/2.6\n', '', content)
+		# content = content.replace('#EXTVLCOPT:http-user-agent=VAVOO/2.6\n', '')
+		# # content = re.sub('#EXTVLCOPT:http-user-agent=VAVOO/2.6\n', '', content)
 		regexcat = '#EXTINF.*?,(.*?)\\n(.*?)\\n'
-		#match = re.compile(regexcat, re.DOTALL).findall(content)
+		# match = re.compile(regexcat, re.DOTALL).findall(content)
 		match = re.compile(regexcat).findall(str(content))
 		for name, url in match:
 			name = unquote(name)
@@ -1190,6 +1204,7 @@ class m3uOpen(Screen):
 				self.session.open(MoviePlayer, ref)
 			else:
 				self.session.nav.playService(ref)
+			self["currentfolder"].setText(str(self.name) + " -> " + str(self.names[idx]))
 	
 	def seekRelative(self, direction, amount):
 		seekable = self.getSeek()
@@ -1209,30 +1224,30 @@ class m3uOpen(Screen):
 	def cancel(self):
 		Screen.close(self, False)
 
-	#def searchFile(self):
-	#	self.session.openWithCallback(self.filterFile, VirtualKeyBoard, title="Search for file(s) in the file list...", text='')
+	def searchEntry(self):
+		self.session.openWithCallback(self.filterEntry, VirtualKeyBoard, title="Search for entries in the .m3u(8) list...", text='')
 
-	#def filterFile(self, retval):
-	#	if retval:
-	#		try:
-	#			search = retval
-	#			#print('keyboard input -> %s' % search)
-	#			newList = []
-	#			for file_tuple in self["filelist"].list:
-	#				name = file_tuple
-	#				if search.lower() in str(name).lower():
-	#					newList.append(file_tuple)
-	#			if len(newList) < 1:
-	#				self.session.open(MessageBox, "No file(s) found!!!", MessageBox.TYPE_INFO, timeout=5)
-	#				return
-	#			else:
-	#				self["filelist"].l.setList(newList)
-	#				self["filelist"].moveToIndex(0)
-	#				#self.session.open(MessageBox, "Not well implemented yet", MessageBox.TYPE_INFO, timeout=5)
-	#				# needs to be fixed, search finds entries, ok plays the first item from the whole m3u list, not from the search list
-	#		except Exception as e:
-	#			self.session.open(MessageBox, "Error", MessageBox.TYPE_INFO, timeout=5)
-	#			#print(e)
+	def filterEntry(self, retval):
+		if retval:
+			try:
+				search = retval
+				# print('keyboard input -> %s' % search)
+				newList = []
+				for file_tuple in self["filelist"].list:
+					name = file_tuple
+					if search.lower() in str(name).lower():
+						newList.append(file_tuple)
+				if len(newList) < 1:
+					self.session.open(MessageBox, "No entries found!!!", MessageBox.TYPE_INFO, timeout=5)
+					return
+				else:
+					self["filelist"].l.setList(newList)
+					self["filelist"].moveToIndex(0)
+					self.session.open(MessageBox, "needs to be fixed, search finds entries,\nok plays the first item from the whole\n.m3u(8) list and not from the search list", MessageBox.TYPE_INFO, timeout=6)
+					self['currentfolder'].setText(self.name + "  ( " + str(len(newList)) + ' entries found )')
+			except Exception as e:
+				self.session.open(MessageBox, "Error", MessageBox.TYPE_INFO, timeout=5)
+				# print(e)
 
 class e2plsOpen(Screen):
 	def __init__(self, session, name):
@@ -1245,12 +1260,10 @@ class e2plsOpen(Screen):
 		self.hideflag = True
 
 		self['openList'] = ActionMap(['OkCancelActions', 'ColorActions', 'MenuActions', 'NumberActions', 'ChannelSelectBaseActions'],
-		{	#'red': self.del_entry,
+		{	# 'red': self.del_entry,
 			'8': self.listbegin,
 			'0': self.listend,
 			'menu': self.listtoggle,
-			'green': self.okClicked,
-			'blue': self.okClicked,
 			'cancel': self.cancel,
 			'prevBouquet': self.chDown,
 			'nextBouquet': self.chUp,
@@ -1267,7 +1280,7 @@ class e2plsOpen(Screen):
 		self.names = []
 		content = open(self.name, 'r', encoding='utf-8', errors='ignore').read()
 		regexcat = '4097\:0\:0\:0\:0\:0\:0\:0\:0\:0\:(.*?)\\n'
-		#match = re.compile(regexcat, re.DOTALL).findall(content)
+		# match = re.compile(regexcat, re.DOTALL).findall(content)
 		match = re.compile(regexcat).findall(str(content))
 		for name in match:
 			self.names.append(name)
@@ -1311,6 +1324,7 @@ class e2plsOpen(Screen):
 				self.session.open(MoviePlayer, ref)
 			else:
 				self.session.nav.playService(ref)
+			self["currentfolder"].setText(str(self.name) + " -> " + str(self.names[idx]))
 
 	def cancel(self):
 		Screen.close(self, False)
@@ -1326,12 +1340,10 @@ class plsOpen(Screen):
 		self.hideflag = True
 
 		self['openList'] = ActionMap(['OkCancelActions', 'ColorActions', 'MenuActions', 'NumberActions', 'ChannelSelectBaseActions'],
-		{	#'red': self.del_entry,
+		{	# 'red': self.del_entry,
 			'8': self.listbegin,
 			'0': self.listend,
 			'menu': self.listtoggle,
-			'green': self.okClicked,
-			'blue': self.okClicked,
 			'cancel': self.cancel,
 			'prevBouquet': self.chDown,
 			'nextBouquet': self.chUp,
@@ -1348,9 +1360,9 @@ class plsOpen(Screen):
 		from io import open
 		self.names = []
 		self.urls = []
-		content = open(self.name, 'r', encoding='utf-8', errors='ignore').read() #py3 and py2 with from io import open
+		content = open(self.name, 'r', encoding='utf-8', errors='ignore').read() # py3 and py2 ok with -> from io import open
 		regexcat = 'File.*?=(.*?)\\n.*?=(.*?)\\n'
-		#match = re.compile(regexcat,re.DOTALL).findall(content)
+		# match = re.compile(regexcat,re.DOTALL).findall(content)
 		match = re.compile(regexcat).findall(str(content))
 		for url, name in match:
 			name = unquote(name)
@@ -1388,7 +1400,7 @@ class plsOpen(Screen):
 	def okClicked(self):
 		idx = self['filelist'].getSelectionIndex()
 		if idx is None:
-			return
+			return None
 		else:
 			name = self.names[idx]
 			url = self.urls[idx]
@@ -1398,6 +1410,7 @@ class plsOpen(Screen):
 				self.session.open(MoviePlayer, ref)
 			else:
 				self.session.nav.playService(ref)
+			self["currentfolder"].setText(str(self.name) + " -> " + str(self.names[idx]))
 			
 	def cancel(self):
 		Screen.close(self, False)
@@ -1413,12 +1426,10 @@ class txtOpen(Screen):
 		self.hideflag = True
 
 		self['openList'] = ActionMap(['OkCancelActions', 'ColorActions', 'MenuActions', 'NumberActions', 'ChannelSelectBaseActions', 'InfobarTeletextActions'],
-		{	#'red': self.del_entry,
+		{	# 'red': self.del_entry,
 			'8': self.listbegin,
 			'0': self.listend,
 			'menu': self.listtoggle,
-			'green': self.okClicked,
-			'blue': self.okClicked,
 			'cancel': self.cancel,
 			'prevBouquet': self.chDown,
 			'nextBouquet': self.chUp,
@@ -1435,7 +1446,7 @@ class txtOpen(Screen):
 		from six.moves.urllib.parse import unquote
 		from io import open
 		self.names = []
-		content = open(self.name, 'r', encoding='utf-8', errors='ignore').read() #py3 and py2 with from io import open
+		content = open(self.name, 'r', encoding='utf-8', errors='ignore').read() # py3 and py2 ok with -> from io import open
 		regexcat = '(.*?)\\n'
 		match = re.compile(regexcat).findall(str(content))
 		for name in match:
@@ -1485,16 +1496,17 @@ class txtOpen(Screen):
 		else:
 			name = self.names[idx]
 			ref = eServiceReference(4097, 0, name)
-			#ref.setName(name)
+			# ref.setName(name)
 			if config.plugins.videoplayersimple.iptvmovieplayer.value == True:
 				self.session.open(MoviePlayer, ref)
 			else:
 				self.session.nav.playService(ref)
+			self["currentfolder"].setText(str(self.name) + " -> " + str(self.names[idx]))
 
 	def cancel(self):
 		Screen.close(self, False)
 
-class userbouquetOpen(Screen):
+class userbouquetTvOpen(Screen):
 	def __init__(self, session, name):
 		self.skin = VideoPlayerSimple.skin
 		Screen.__init__(self, session)
@@ -1504,14 +1516,40 @@ class userbouquetOpen(Screen):
 		self.currentList = 'filelist'
 		self.hideflag = True
 
-		self['openList'] = ActionMap(['OkCancelActions', 'ColorActions', 'MenuActions', 'NumberActions', 'ChannelSelectBaseActions'],
-		{	#'red': self.del_entry,
+		try: fwd15 = lambda: self.seekRelative(1, config.seek.selfdefined_13.value * 90000)
+		except: pass
+		try: back15 = lambda: self.seekRelative(-1, config.seek.selfdefined_13.value * 90000)
+		except: pass
+		try: fwd15 = lambda: self.seekRelative(1, config.seek.selfdefined_13.value * 90000)
+		except: pass
+		try: back60 = lambda: self.seekRelative(-1, config.seek.selfdefined_46.value * 90000)
+		except: pass
+		try: fwd60 = lambda: self.seekRelative(1, config.seek.selfdefined_46.value * 90000)
+		except: pass
+		try: back300 = lambda: self.seekRelative(-1, config.seek.selfdefined_79.value * 90000)
+		except: pass
+		try: fwd300 = lambda: self.seekRelative(1, config.seek.selfdefined_79.value * 90000)
+		except: pass
+		try: back10 = lambda: self.seekRelative(-1, 10 * 90000)
+		except: pass
+		try: fwd10 = lambda: self.seekRelative(1, 10 * 90000)
+		except: pass
+
+		self['openList'] = ActionMap(['OkCancelActions', 'ColorActions', 'MenuActions', 'NumberActions', 'ChannelSelectBaseActions', 'ChannelSelectEPGActions', 'InfobarTeletextActions'],
+		{	# 'red': self.del_entry,
+			'1': back15, 
+			'3': fwd15,
+			'4': back60,
+			'6': fwd60,
+			'7': back300,
+			'9': fwd300,
 			'8': self.listbegin,
 			'0': self.listend,
+			'prevService': back10,
+			'nextService': fwd10,
 			'menu': self.listtoggle,
-			'green': self.okClicked,
-			'blue': self.okClicked,
 			'cancel': self.cancel,
+			'startTeletext': self.searchEntry,
 			'prevBouquet': self.chDown,
 			'nextBouquet': self.chUp,
 			'ok': self.okClicked
@@ -1527,16 +1565,16 @@ class userbouquetOpen(Screen):
 		from io import open
 		self.names = []
 		self.urls = []
-		content = open(self.name, 'r', encoding='utf-8', errors='ignore').read() #py3 and py2 with from io import open
-		#content = open(self.name, 'r').read().decode('UTF-8') #only py2
+		content = open(self.name, 'r', encoding='utf-8', errors='ignore').read() # py3 and py2 ok with -> from io import open
+		# content = open(self.name, 'r').read().decode('UTF-8') #only py2
 		if config.plugins.videoplayersimple.iptvdescription.value == True:
 			regexcat = '#SERVICE [^hmrSsYy]+(.*?)\:(.*?)\\n' # from the first occurance of "(h)ttp", "(m)ms", "(r)tm(p)", "rtp(s)", "(Ss)treamlink", "(Yy)T-DL(P)" and before last occurance of ":", phew!, took me hours
 		else:
 			regexcat = '#SERVICE [^hmrSsYy]+(.*?)\\n#DESCRIPTION (.*?)\\n' # takes description from second line and not after ":", HDF .radio list ok
-		#match = re.compile(regexcat,re.DOTALL).findall(content)
+		# match = re.compile(regexcat,re.DOTALL).findall(content)
 		match = re.compile(regexcat).findall(str(content))
 		for url, name in match:
-			#name = name.replace("%20", " ").replace("%", "_")
+			# name = name.replace("%20", " ").replace("%", "_")
 			name = unquote(name)
 			if config.plugins.videoplayersimple.iptvdescription.value == False:
 				url = url.split(':', 1)[0] # ok
@@ -1575,7 +1613,7 @@ class userbouquetOpen(Screen):
 	def okClicked(self):
 		idx = self['filelist'].getSelectionIndex()
 		if idx is None:
-			return
+			return None
 		else:
 			name = self.names[idx]
 			url = self.urls[idx]
@@ -1585,10 +1623,230 @@ class userbouquetOpen(Screen):
 				self.session.open(MoviePlayer, ref)
 			else:
 				self.session.nav.playService(ref)
+			self["currentfolder"].setText(str(self.name) + " -> " + str(self.names[idx]))
+
+	def seekRelative(self, direction, amount):
+		seekable = self.getSeek()
+		if seekable is None:
+			return
+		seekable.seekRelative(direction, amount)
+
+	def getSeek(self):
+		service = self.session.nav.getCurrentService()
+		if service is None:
+			return None
+		seek = service.seek()
+		if seek is None or not seek.isCurrentlySeekable():
+			return None
+		return seek
 			
 	def cancel(self):
 		Screen.close(self, False)
 
+	def searchEntry(self):
+		self.session.openWithCallback(self.filterEntry, VirtualKeyBoard, title="Search for entries in the .tv list...", text='')
+
+	def filterEntry(self, retval):
+		if retval:
+			try:
+				search = retval
+				# print('keyboard input -> %s' % search)
+				newList = []
+				for file_tuple in self["filelist"].list:
+					name = file_tuple
+					if search.lower() in str(name).lower():
+						newList.append(file_tuple)
+				if len(newList) < 1:
+					self.session.open(MessageBox, "No entries found!!!", MessageBox.TYPE_INFO, timeout=5)
+					return
+				else:
+					self["filelist"].l.setList(newList)
+					self["filelist"].moveToIndex(0)
+					self.session.open(MessageBox, "needs to be fixed, search finds entries,\nok plays the first item from the whole\n.tv list and not from the search list", MessageBox.TYPE_INFO, timeout=6)
+					self['currentfolder'].setText(self.name + "  ( " + str(len(newList)) + ' entries found )')
+			except Exception as e:
+				self.session.open(MessageBox, "Error", MessageBox.TYPE_INFO, timeout=5)
+				# print(e)
+
+class userbouquetRadioOpen(Screen):
+	def __init__(self, session, name):
+		self.skin = VideoPlayerSimple.skin
+		Screen.__init__(self, session)
+		
+		self.filelist = []
+		self["filelist"] = user_list([])
+		self.currentList = 'filelist'
+		self.hideflag = True
+				
+		self['openList'] = ActionMap(['OkCancelActions', 'ColorActions', 'MenuActions', 'NumberActions', 'ChannelSelectBaseActions', 'ChannelSelectEPGActions', 'InfobarTeletextActions'],
+		{	# 'red': self.del_entry,
+			'8': self.listbegin,
+			'0': self.listend,
+			'7': self.showStreamTitle,
+			'9': self.okClicked,
+			'menu': self.listtoggle,
+			'cancel': self.cancel,
+			'prevBouquet': self.chDown,
+			'nextBouquet': self.chUp,
+			'startTeletext': self.searchEntry,
+			'prevMarker': self.prevStreamTitle,
+			'nextMarker': self.nextStreamTitle,
+			'ok': self.okClicked
+		}, -2)
+		
+		self['currentfolder'] = Label('')
+		self['currentfolder'].setText('')
+		self.name = name
+		self.onLayoutFinish.append(self.openUserbouquet)
+
+	def openUserbouquet(self):
+		from six.moves.urllib.parse import unquote
+		from io import open
+		self.names = []
+		self.urls = []
+		content = open(self.name, 'r', encoding='utf-8', errors='ignore').read() # py3 and py2 ok with -> from io import open
+		# content = open(self.name, 'r').read().decode('UTF-8') # only py2
+		if config.plugins.videoplayersimple.iptvdescription.value == True:
+			regexcat = '#SERVICE [^hmrSsYy]+(.*?)\:(.*?)\\n' # from the first occurance of "(h)ttp", "(m)ms", "(r)tm(p)", "rtp(s)", "(Ss)treamlink", "(Yy)T-DL(P)" and before last occurance of ":", phew!, took me hours
+		else:
+			regexcat = '#SERVICE [^hmrSsYy]+(.*?)\\n#DESCRIPTION (.*?)\\n' # takes description from second line and not after ":", HDF .radio list ok
+		# match = re.compile(regexcat,re.DOTALL).findall(content)
+		match = re.compile(regexcat).findall(str(content))
+		for url, name in match:
+			# name = name.replace("%20", " ").replace("%", "_")
+			name = unquote(name)
+			if config.plugins.videoplayersimple.iptvdescription.value == False:
+				url = url.split(':', 1)[0] # ok
+			url = url.replace("%3a", ":").replace("%3A", ":")
+			self.names.append(name)
+			self.urls.append(url)
+		showlist(self.names, self["filelist"])
+		self['currentfolder'].setText(self.name + '  ( ' + str(len(self.names)) + ' streams found )')
+
+	def prevStreamTitle(self):
+		self[self.currentList].up()
+		self.showStreamTitle()
+
+	def nextStreamTitle(self):
+		self[self.currentList].down()
+		self.showStreamTitle()
+
+	def chUp(self):
+		for x in range(5):
+			self[self.currentList].pageUp()
+
+	def chDown(self):
+		for x in range(5):
+			self[self.currentList].pageDown()
+
+	def listbegin(self):
+		indx = len(self.names)
+		for x in range(indx):
+			self[self.currentList].pageUp()
+
+	def listend(self):
+		indx = len(self.names)
+		for x in range(indx):
+			self[self.currentList].pageDown()
+
+	def listtoggle(self):
+		if self.hideflag == True:
+			self.hideflag = False
+			self.hide()
+		else:
+			self.hideflag = True
+			self.show()
+
+	def showStreamTitle(self):
+		try:
+			import requests
+		except ImportError:
+			self.session.open(MessageBox, "install requests package !\nopkg install python-requests\nor\nopkg install python3-requests", MessageBox.TYPE_INFO, timeout=5)
+			print(("\ninstall requests package, 'opkg install python-requests' or 'opkg install python3-requests'\n"))
+		
+		idx = self['filelist'].getSelectionIndex()
+		if idx is None:
+			return None
+		else:
+			name = self.names[idx]
+			url = self.urls[idx]
+			try:
+				response = requests.get(url, headers={'Icy-MetaData': '1'}, stream=True, timeout=10, verify=None)
+				response.raise_for_status()
+				headers, stream = response.headers, response.raw
+				meta_int = headers.get('icy-metaint')
+				if meta_int is not None:
+				        audio_length = int(meta_int)
+				audio_data = stream.read(audio_length)
+				meta_byte = stream.read(1)
+				if (meta_byte):
+					meta_length = ord(meta_byte) * 16
+					meta_data = stream.read(meta_length)
+					meta_data = meta_data.split(b"StreamTitle='")[1].split(b"';")[0].decode("utf-8", errors="replace")
+					# print ("%s" % name)
+					# print ("ICY title -> %s" % str(meta_data))
+					# self["currentfolder"].setText("" + "\n\n" + str(meta_data))
+					self["currentfolder"].setText(str(name) + " -> " + str(meta_data))
+			
+			except requests.ConnectionError as e:
+				# print("[ICY title] -> Connection Error\n")
+				self["currentfolder"].setText("Connection Error: -> " + str(name) + " -> " + str(e))
+				requests.session().close()
+			except requests.Timeout as e:
+				# print("[ICY title] -> Timeout Error\n")
+				self["currentfolder"].setText("Timeout Error: -> " + str(name) + " -> " + str(e))
+				requests.session().close()
+			except requests.RequestException as e:
+				# print("[ICY title] -> General Error\n")
+				self["currentfolder"].setText("General Error: -> " + str(name) + " -> " + str(e))
+				requests.session().close()
+			except:
+				# print ("Error or icy metadata not available")
+				self["currentfolder"].setText(str(name) + " -> " + "Error or icy metadata not available")
+	
+	def okClicked(self):
+		idx = self['filelist'].getSelectionIndex()
+		if idx is None:
+			return None
+		else:
+			name = self.names[idx]
+			url = self.urls[idx]
+			ref = eServiceReference(4097, 0, url)
+			ref.setName(name)
+			if config.plugins.videoplayersimple.iptvmovieplayer.value == True:
+				self.session.open(MoviePlayer, ref)
+			else:
+				self.session.nav.playService(ref)
+			self["currentfolder"].setText(str(self.name) + " -> " + str(self.names[idx]))
+
+	def cancel(self):
+		Screen.close(self, False)
+
+	def searchEntry(self):
+		self.session.openWithCallback(self.filterEntry, VirtualKeyBoard, title="Search for entries in the .radio list...", text='')
+
+	def filterEntry(self, retval):
+		if retval:
+			try:
+				search = retval
+				# print('keyboard input -> %s' % search)
+				newList = []
+				for file_tuple in self["filelist"].list:
+					name = file_tuple
+					if search.lower() in str(name).lower():
+						newList.append(file_tuple)
+				if len(newList) < 1:
+					self.session.open(MessageBox, "No entries found!!!", MessageBox.TYPE_INFO, timeout=5)
+					return
+				else:
+					self["filelist"].l.setList(newList)
+					self["filelist"].moveToIndex(0)
+					self.session.open(MessageBox, "needs to be fixed, search finds entries,\nok plays the first item from the whole\n.radio list and not from the search list", MessageBox.TYPE_INFO, timeout=6)
+					self['currentfolder'].setText(self.name + "  ( " + str(len(newList)) + ' entries found )')
+			except Exception as e:
+				self.session.open(MessageBox, "Error", MessageBox.TYPE_INFO, timeout=5)
+				# print(e)
+	
 class user_list(MenuList):
 	def __init__(self, list):
 		MenuList.__init__(self, list, True, eListboxPythonMultiContent)
@@ -1606,11 +1864,11 @@ def showlist(data, list):
 	mlist = []
 	for line in data:
 		name = data[icount]
-		mlist.append(m3u_user_show(name))
+		mlist.append(user_show(name))
 		icount += 1
 	list.setList(mlist)
 
-def m3u_user_show(name):
+def user_show(name):
 	res = [name]
 	if (getDesktop(0).size().width() >= 1920):
 		res.append(MultiContentEntryText(pos=(12, 4), size=(1880, 44), text=name))
@@ -1663,7 +1921,7 @@ class PictureExplorer(Screen):
 		self.whatDir = whatDir
 		self.picList = []
 		self.Pindex = 0
-		#self.EXscale = (AVSwitch().getFramebufferScale())
+		# self.EXscale = (AVSwitch().getFramebufferScale())
 		self.EXpicload = ePicLoad()
 		self["Picture"] = Pixmap()
 		self.oldService = self.session.nav.getCurrentlyPlayingServiceReference()
@@ -1682,7 +1940,7 @@ class PictureExplorer(Screen):
 
 	def Show_Picture(self):
 		if self.whatPic is not None:
-			#self.EXpicload.setPara([self["Picture"].instance.size().width(), self["Picture"].instance.size().height(), self.EXscale[0], self.EXscale[1], 0, 1, "#FF2C2C39", 1])
+			# self.EXpicload.setPara([self["Picture"].instance.size().width(), self["Picture"].instance.size().height(), self.EXscale[0], self.EXscale[1], 0, 1, "#FF2C2C39", 1])
 			self.EXpicload.setPara([self["Picture"].instance.size().width(), self["Picture"].instance.size().height(), 1, 1, 0, 1, "#FF2C2C39", 1])
 			self.EXpicload.startDecode(self.whatPic)
 		if self.whatDir is not None:
@@ -1694,7 +1952,7 @@ class PictureExplorer(Screen):
 						if name in self.whatPic:
 							self.Pindex = pidx
 						pidx += 1
-				break #only current dir without subdirs
+				break # only current dir without subdirs
 
 	def DecodeAction(self, pictureInfo=""):
 		if self.whatPic is not None:
